@@ -10,6 +10,9 @@ from itertools import product
 import matplotlib.pyplot as plt
 import train_geo
 
+# Try to remove this line eventually!!!
+np.seterr(all='ignore')
+
 # Method Definition
 # =================
 
@@ -56,17 +59,24 @@ def arg_migration_matrix(M):
 
 def arg_create():
 	args = []
-	args.append('-t %f' % THETA)  # mutation rate theta
-	args.append('-p 9')  # The number of decimals after the dot for precision
-	args.append('-L') # Should give some sort of time.
+	args.append('macs %s 1e6' % TOTAL_SAMPLE)  # first args
+	args.append('-t 0.001')  # mutation rate theta
+	# args.append('-t %f' % THETA)  # mutation rate theta
+	# args.append('-p 9')  # The number of decimals after the dot for precision
+	# args.append('-L') # Should give some sort of time.
 	args.append('-T')
-	args.append('-r %f %d' % (RECOMBINATION_PARAMETER, NUMBER_OF_SITES ) )  # recombination
+	# args.append('-r %f %d' % (RECOMBINATION_PARAMETER, NUMBER_OF_SITES ) )  # recombination
+	args.append('-r 0.00001')  # recombination
+	args.append('-h 1e2')
 	args.append(arg_sampling_number_per_demes())
 	args.append(arg_migration_matrix(migration_matrix))
+	# args.append('-R example_input/hotspot.txt')
+	# args.append('-F example_input/ascertainment.txt 0')
+	args.append('2>trees.txt | msformatter > haplotypes.txt')
 
-	f = open('c.ms', 'w')
+	f = open('c.macs', 'w')
 	for l in args:
-		f.write('%s\n' % l)
+		f.write('%s ' % l)
 	f.close()
 	f = open('markers.txt', 'w')
 	markers = reduce(lambda x, y: x+y, [[i] * (TOTAL_SAMPLE/len(searchspace_radians)/2) for i in range(len(searchspace_radians))] )
@@ -85,7 +95,7 @@ sorter = np.argsort(searchspace_radians[:,0])
 searchspace_euclidean, searchspace_radians, searchspace_degree = searchspace_euclidean[sorter], searchspace_radians[sorter], searchspace_degree[sorter]
 
 NB_DEMES = len(searchspace_radians)
-TOTAL_SAMPLE = 10 * len(searchspace_radians)
+TOTAL_SAMPLE = 4 * len(searchspace_radians)
 DIPLOID_POPULATION_SIZE = 10000  # AKA N_0
 NUMBER_OF_SITES = 4000  # The number of places recombination can happen
 # NEUTRAL_MUTATION_RATE = 3 *  (1. / NUMBER_OF_SITES)  # Per site
@@ -130,6 +140,6 @@ ax = fig.add_subplot(111)
 draw_grid(ax, searchspace_radians, migration_matrix)
 plt.savefig('grid_look.png')
 arg_create()
-fcommand = open('run_c.sh','w')
-fcommand.write('ms %s 1 -f c.ms' % TOTAL_SAMPLE)
-fcommand.close()
+# fcommand = open('run_c.sh','w')
+# fcommand.write('ms %s 1 -f c.ms' % TOTAL_SAMPLE)
+# fcommand.close()
