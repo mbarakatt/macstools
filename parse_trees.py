@@ -2,7 +2,9 @@ import dendropy as dy
 from time import time
 import numpy as np
 import matplotlib.pylab as plt
+from subprocess import call
 
+call('grep "^\[" haplotypes.txt > only_trees.txt', shell=True)
 fin = open('only_trees.txt', 'r')
 fpositions = open('trees.txt', 'r')
 
@@ -16,9 +18,10 @@ for l in fpositions:
 
 recombination_position = np.array(recombination_position)
 
-query_list = np.linspace(0,np.max(recombination_position),400)
+query_list = np.linspace(0,np.max(recombination_position) - 0.00001,400)
 # print 'query_list:',  query_list
 
+print np.searchsorted(recombination_position, query_list)
 indices_trees_of_interest = np.unique(np.searchsorted(recombination_position, query_list))
 
 # while fin.readline() != "//\n":
@@ -78,12 +81,17 @@ for t in range(len(trees)):
 			ys[t,i,j] = trees[t].mrca(taxon_labels=[str(j),str(i)]).age
 
 print time() - t0
-f = plt.figure()
-ax = f.add_subplot(111)
-ax.set_yscale('log')
+for i in range(len(ys)):
+	ys[i] = ys[i] + ys[i].T
 
-ax.plot(recombination_position[indices_trees_of_interest], ys, '-')
-plt.show()
+np.save('tmrca_matrix.npy', ys)
+# f = plt.figure()
+# ax = f.add_subplot(111)
+# ax.set_yscale('log')
+
+
+# ax.plot(recombination_position[indices_trees_of_interest], ys, '-')
+# plt.show()
 # print [tree1.mrca(taxon_labels=['1',str(i)]).edge_length for i in range(100)]
 # print tree1.mrca(taxon_labels=tree1.taxon_set.labels()).edge_length
 

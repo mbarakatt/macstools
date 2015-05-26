@@ -27,12 +27,12 @@ def v_color():
 
 def plot_point(ax, p):
     x, y = p
-    ax.plot(y, x, 'o', color='#999999', zorder=1)
+    ax.plot(x, y, 'o', color='#999999', zorder=1)
 
 
 def plot_line(ax, p1, p2):
     x, y = [p1[0], p2[0]], [p1[1], p2[1]]
-    ax.plot(y, x, color=v_color(), alpha=0.7, linewidth=3, solid_capstyle='round', zorder=2)
+    ax.plot(x, y, color=v_color(), alpha=0.7, linewidth=3, solid_capstyle='round', zorder=2)
 
 
 def draw_grid(ax, pos, migration_matrix):
@@ -91,9 +91,6 @@ MAXIMUM_DISTANCE_MIGRATION = 300  # in km
 searchspace_euclidean, searchspace_radians, searchspace_degree = train_geo.load_and_filter_searchspace(BOUNDS["SCCS"], searchsphere_no, prefix_path='../myscripts/gen_searchspheres/searchspheres/')
 # searchspace_euclidean, searchspace_radians, searchspace_degree = train_geo.load_and_filter_searchspace(BOUNDS["SCCS"], searchsphere_no, prefix_path='/Volumes/gravel/barakatt_projects/dist/src/searchspheres/')
 
-# reorder grid according to longitudes
-sorter = np.argsort(searchspace_radians[:,0])
-searchspace_euclidean, searchspace_radians, searchspace_degree = searchspace_euclidean[sorter], searchspace_radians[sorter], searchspace_degree[sorter]
 
 NB_DEMES = len(searchspace_radians)
 TOTAL_SAMPLE = 4 * len(searchspace_radians)
@@ -103,6 +100,20 @@ NUMBER_OF_SITES = 4000  # The number of places recombination can happen
 BETWEEN_SITES_RECOMBINATION_PROBABILITY = 10**(-6)  # 1. / NUMBER_OF_SITES
 RECOMBINATION_PARAMETER = 4 * DIPLOID_POPULATION_SIZE * (BETWEEN_SITES_RECOMBINATION_PROBABILITY * NUMBER_OF_SITES)  # 4N_0r, where r is the probability of cross-over per generation between the ends of the locus being simulated.
 # THETA = 4 * DIPLOID_POPULATION_SIZE * NEUTRAL_MUTATION_RATE  # 4*N_0*mu
+
+
+# reorder grid according to longitudes
+sorter = np.argsort(searchspace_radians[:,0])
+searchspace_euclidean, searchspace_radians, searchspace_degree = searchspace_euclidean[sorter], searchspace_radians[sorter], searchspace_degree[sorter]
+
+indiv_position = []
+for p in searchspace_radians:
+	for i in range(TOTAL_SAMPLE / len(searchspace_radians)):
+		indiv_position.append(p)
+
+np.savetxt('macs_sim/indiv_position.txt', indiv_position, delimiter='\t')
+# exit()
+
 
 
 # Train3
