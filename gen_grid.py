@@ -88,7 +88,8 @@ def arg_create():
 # =============
 searchsphere_no = 17
 MAXIMUM_DISTANCE_MIGRATION = 300  # in km
-searchspace_euclidean, searchspace_radians, searchspace_degree = train_geo.load_and_filter_searchspace(BOUNDS["SCCS"], searchsphere_no, prefix_path='/Volumes/gravel/barakatt_projects/dist/src/searchspheres/')
+searchspace_euclidean, searchspace_radians, searchspace_degree = train_geo.load_and_filter_searchspace(BOUNDS["SCCS"], searchsphere_no, prefix_path='../myscripts/gen_searchspheres/searchspheres/')
+# searchspace_euclidean, searchspace_radians, searchspace_degree = train_geo.load_and_filter_searchspace(BOUNDS["SCCS"], searchsphere_no, prefix_path='/Volumes/gravel/barakatt_projects/dist/src/searchspheres/')
 
 # reorder grid according to longitudes
 sorter = np.argsort(searchspace_radians[:,0])
@@ -105,7 +106,8 @@ RECOMBINATION_PARAMETER = 4 * DIPLOID_POPULATION_SIZE * (BETWEEN_SITES_RECOMBINA
 
 
 # Train3
-TRAIN_PATH = '/Volumes/gravel/barakatt_projects/dist/src/simulations/trains/train0.txt'
+# TRAIN_PATH = '/Volumes/gravel/barakatt_projects/dist/src/simulations/trains/train0.txt'
+TRAIN_PATH = '../dist/src/simulations/trains/train0.txt'
 mytrain = geode.line(*np.loadtxt(TRAIN_PATH), inputformat='degrees')
 
 m_param = 0.000025  #0.05  # m is the fraction of each subpopulation made up of new migrants each generation.
